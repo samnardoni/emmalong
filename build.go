@@ -11,7 +11,6 @@ import (
 
 const (
 	maxLength = 10000
-	maxLengthPhoto = 1e6
 )
 
 var (
@@ -68,7 +67,7 @@ func (p *Photo) SetWidthAndHeight() {
 	p.Height = image.Bounds().Max.Y
 }
 
-type Output map[string][]Photo
+type Output map[string][]*Photo
 
 func main() {
 
@@ -91,10 +90,20 @@ func main() {
 			return
 		}
 
+		c := make(chan bool)
+
 		for _, flickrPhoto := range(m.Photoset.Photo) {
-			photo := Photo {URL: flickrPhoto.URL("b")}
-			photo.SetWidthAndHeight()
+			photo := &Photo {URL: flickrPhoto.URL("b")}
 			output[photosetName] = append(output[photosetName], photo)
+
+			go func() {
+				photo.SetWidthAndHeight()
+				c <- true
+			}()
+		}
+
+		for i := 0; i < len(m.Photoset.Photo); i++ {
+			<-c
 		}
 
 	}
