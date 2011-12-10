@@ -8,61 +8,65 @@
     <script src="javascripts/jquery.js" type="text/javascript"></script>
     <script src="javascripts/jquery.flickr.js" type="text/javascript"></script>
     <script src="javascripts/jquery.mousewheel.js" type="text/javascript"></script>
+    <script src="javascripts/photos.js" type="text/javascript"></script>
     <script type="text/javascript" charset="utf-8">
-      var sets = { "#people": "72157625050708435",
-                   "#urban": "72157625050716803",
-                   "#landscape": "72157625175466660",
-                   "#nature": "72157625175473042",
-                   "#misc": "72157625050738565"};
       
       $(document).ready(function(){
 
-        displayPhotos(urlTag() || '#people');
+        displayPhotos(urlTag() || 'people');
         
         $('ul#photosets li a').click(function() {
-          displayPhotos($(this).attr('href'));
+          displayPhotos(removeHash($(this).attr('href')));
         });
         
-        $('.photos').mousewheel(function(event, delta, deltaX, deltaY) {
+        /*$('.photos').mousewheel(function(event, delta, deltaX, deltaY) {
           $(this).scrollLeft($(this).scrollLeft() - ((deltaY<0?-1:1) * 70));
           event.preventDefault();
-        });
+        });*/
 		
-		$(document).scroll(function(){
+		/*$(document).scroll(function(){
 			$('#header').css('margin-top', '-'+$(this).scrollTop()+'px');
-		});
+		});*/
 		
       });
 
       
       function urlTag() {
         var tag = window.location.href.match(/#(.+)/);
-        return tag ? tag[0] : null;
+        return tag ? tag[1] : null;
+      }
+
+      function removeHash(str)
+      {
+      	return str.substring(1, str.length);
+      }
+
+      function section(set)
+      {
+      	return '#'+set+'-section';
+      }
+
+      function imageTag(src)
+      {
+      	return '<img src="'+src+'"></img>'
       }
       
       function displayPhotos(set) {
-        $(set+'-section[loaded!=true]').flickr({
-          api_key: 'a7a41add565d37c3ea0790ace3faf1f5',
-          type: 'photoset',
-          photoset_id: sets[set],
-          size: 'b',
-		  callback: function() {
-			$(set+'-section img').hide();
-			$(set+'-section img').load(function() {
-				$(this).fadeIn();
-			});
-		  }
-        });
-        $(set+'-section').attr('loaded', 'true');
-		
-		
-		$('.photos').fadeOut();
-		$(set+'-section').fadeIn(); 
-		/*$("body").scrollLeft();*/
-		
-               
+
         $('ul#photosets li a').removeClass('selected');
-        $('ul#photosets li a[href='+set+']').addClass('selected');
+        $('ul#photosets li a[href=#'+set+']').addClass('selected');
+
+        $('.photos').fadeOut();
+        $(section(set)).fadeIn();
+
+        $(section(set)).empty();
+        $(section(set)).append('<table>');
+        for(var i=0; i<photos[set].length; i++)
+	    {
+	    	$(section(set)).append('<td>'+imageTag(photos[set][i])+'</td>');
+	    }
+	    $(section(set)).append('</table>');
+
       }
       
     </script>
@@ -131,14 +135,14 @@
 			cursor: pointer !important;
 		  }
 		  
-          a#contact:link {
+			a#contact:link {
                 font-family: 'Yanone Kaffeesatz', arial, serif;
-		position: fixed;
-		top: 10px;
-		right: 10px;
-		color: #999;
-                text-decoration: none;
-	  }
+				position: fixed;
+				top: 10px;
+				right: 10px;
+				color: #999;
+				text-decoration: none;
+			}
 
           a#contact:hover {
                 color: #333;
@@ -152,12 +156,13 @@
       .photos img {
 		background: #FFF;
 		border: 1px solid #BBB; /* #CCC */
+		display: inline;
 		margin: 0 12px 10px;
-		padding: 15px;
-        height: 500px;
+		padding: 10px;
+        height: 450px;
 		-moz-box-shadow: 7px 7px 10px #C4C4C4;
         -webkit-box-shadow: 7px 7px 10px #C4C4C4; /* #DDD */
-         box-shadow: 7px 7px 10px #C4C4C4;
+        box-shadow: 7px 7px 10px #C4C4C4;
       }
       
     </style>
