@@ -13,7 +13,7 @@
 
         displayPhotos(urlTag() || 'people');
         
-        $('ul#photosets li a').click(function() {
+        $('#photosets a').click(function() {
           displayPhotos(removeHash($(this).attr('href')));
         });
 		
@@ -44,8 +44,8 @@
       
       function displayPhotos(set) {
 
-        $('ul#photosets li a').removeClass('selected');
-        $('ul#photosets li a[href=#'+set+']').addClass('selected');
+        $('#photosets a').removeClass('selected');
+        $('#photosets a[href=#'+set+']').addClass('selected');
 
         $('.photos').hide();
         $(window).scrollLeft(0);
@@ -100,28 +100,21 @@
 			margin-bottom: 30px;
 		  }
 		  
-		  ul#photosets {
+		  div#photosets {
 		    font-family: 'Yanone Kaffeesatz', arial, serif;
-			list-style-type: none;
-			margin: 0 auto;
-			margin-bottom: 20px;
-			overflow: hidden;
-			width: 390px;
+		    text-align: center;
 		  }
 		  
-		  ul#photosets li a {
-			border-radius: 15px;
+		  div#photosets a {
+			border-radius: 10px;
 			color: #555;
-			display: block;
-			float: left;
 			text-decoration: none;
-			padding: 8px 20px;
-			margin: 0 2px;
-			text-align: center;
+			padding: 8px 15px;
+			margin: 0 4px;
 		  }
 		  
-		  ul#photosets li a:hover,
-		  ul#photosets li a.selected {
+		  div#photosets a:hover,
+		  div#photosets a.selected {
 			background: #226DF0;
 			background: -webkit-gradient(linear, left top, left bottom, from(#226DF0), to(#144DB3)); /* for webkit browsers */
 		    background: -moz-linear-gradient(top,  #226DF0,  #144DB3); /* for firefox 3.6+ */
@@ -176,13 +169,13 @@
   <body>
 	<div id="header">
 	  <h1 id="title">Emma Long Photography</h1>
-	  <ul id="photosets">
-	    <li><a href="#people">People</a></li>
-		<li><a href="#urban">Urban</a></li>
-		<li><a href="#landscape">Landscape</a></li>
-		<li><a href="#nature">Nature</a></li>
-		<li><a href="#misc">Misc</a></li>
-	  </ul>
+	  <div id="photosets">
+	    <a href="#people">People</a>
+		<a href="#urban">Urban</a>
+		<a href="#landscape">Landscape</a>
+		<a href="#nature">Nature</a>
+		<a href="#misc">Misc</a>
+	  </div>
 	</div>
     <a id="contact" href="mailto:emma@emmalong.co.uk">emma@emmalong.co.uk</a>
     <div class="photos" id="people-section"></div>
