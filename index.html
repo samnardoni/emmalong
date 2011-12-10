@@ -45,8 +45,10 @@
         $('ul#photosets li a').removeClass('selected');
         $('ul#photosets li a[href=#'+set+']').addClass('selected');
 
-        $('.photos').fadeOut();
-        $(section(set)).fadeIn();
+        $('.photos').hide();
+        $(window).scrollLeft(0);
+       	$(section(set)).fadeIn('fast');
+        
 
         $(section(set)).empty();
         $(section(set)).append('<table>');
@@ -56,12 +58,11 @@
 	    }
 	    $(section(set)).append('</table>');
 
-	    
-	    $(body).scrollLeft();
       }
       
     </script>
-<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>    <style type="text/css" media="screen">
+<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>    
+<style type="text/css" media="screen">
       * {
         line-height: 1em;
         margin: 0;
@@ -156,7 +157,7 @@
         box-shadow: 7px 7px 10px #C4C4C4;
       }
       
-    </style>
+</style>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
