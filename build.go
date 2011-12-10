@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"strconv"
 	"os"
+	"image/jpeg"
 )
 
 const (
 	maxLength = 10000
+	maxLengthPhoto = 1e6
 )
 
 var (
@@ -22,17 +24,17 @@ var (
 	}
 )
 
-type Message struct {
-	Photoset Photoset
+type FlickrMessage struct {
+	Photoset FlickrPhotoset
 	Stat     string
 }
 
-type Photoset struct {
+type FlickrPhotoset struct {
 	Id     string
-	Photo []Photo
+	Photo []FlickrPhoto
 }
 
-type Photo struct {
+type FlickrPhoto struct {
 	Id     string
 	Farm   float64
 	Server string
@@ -40,16 +42,33 @@ type Photo struct {
 	Title  string
 }
 
-type URLs []string
-type Output map[string]URLs
-
-func (p *Photo) URL(size string) string {
+func (p *FlickrPhoto) URL(size string) string {
 	//http://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
 
 	return "http://farm" + strconv.Ftoa64(p.Farm, 'f', 0) + 
 		".staticflickr.com/" + p.Server + "/" + p.Id + "_" + p.Secret + "_" + 
 		size + ".jpg"
 }
+
+type Photo struct {
+	URL    string
+	Width  int
+	Height int	
+}
+
+func (p *Photo) SetWidthAndHeight() {
+	fmt.Println("Getting", p.URL, "...")
+
+	client := &http.Client {}
+	response, _ := client.Get(p.URL)
+
+	image, _ := jpeg.Decode(response.Body)
+
+	p.Width = image.Bounds().Max.X
+	p.Height = image.Bounds().Max.Y
+}
+
+type Output map[string][]Photo
 
 func main() {
 
@@ -59,10 +78,12 @@ func main() {
 
 	for photosetName, photosetId := range(photosets) {
 
+		fmt.Println("Getting", photosetName, "...")
+
 		response, _ := client.Get(FlickrPhotosetURL(photosetId))
 		n, _ := response.Body.Read(buffer)
 
-		var m Message
+		var m FlickrMessage
 
 		err := json.Unmarshal(buffer[:n], &m)
 		if err != nil {
@@ -70,8 +91,10 @@ func main() {
 			return
 		}
 
-		for _, photo := range(m.Photoset.Photo) {
-			output[photosetName] = append(output[photosetName], photo.URL("b"))
+		for _, flickrPhoto := range(m.Photoset.Photo) {
+			photo := Photo {URL: flickrPhoto.URL("b")}
+			photo.SetWidthAndHeight()
+			output[photosetName] = append(output[photosetName], photo)
 		}
 
 	}

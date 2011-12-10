@@ -35,9 +35,11 @@
       	return '#'+set+'-section';
       }
 
-      function imageTag(src)
+      function imageTag(i)
       {
-      	return '<img src="'+src+'"></img>'
+      	var targetHeight = 450;
+      	var ratio = 450/i.Height;
+      	return '<img width="'+i.Width*ratio+'" height="'+i.Height*ratio+'" src="'+i.URL+'"></img>'
       }
       
       function displayPhotos(set) {
@@ -151,7 +153,6 @@
 		display: inline;
 		margin: 0 12px 10px;
 		padding: 10px;
-        height: 450px;
 		-moz-box-shadow: 7px 7px 10px #C4C4C4;
         -webkit-box-shadow: 7px 7px 10px #C4C4C4; /* #DDD */
         box-shadow: 7px 7px 10px #C4C4C4;
