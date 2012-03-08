@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/json"
-	"os"
+	"fmt"
 	"image/jpeg"
+	"net/http"
+	"os"
 )
 
 const (
@@ -13,12 +13,10 @@ const (
 )
 
 var (
-	photosets = map[string]string {
-		"people":    "72157625050708435",
-		"urban":     "72157625050716803",
-		"landscape": "72157625175466660",
-		"nature":    "72157625175473042",
-		"misc":      "72157625050738565",
+	photosets = map[string]string{
+		"dance":    "72157625050708435",
+		"portrait": "72157625175466660",
+		"nature":   "72157625175473042",
 	}
 )
 
@@ -28,7 +26,7 @@ type FlickrMessage struct {
 }
 
 type FlickrPhotoset struct {
-	Id     string
+	Id    string
 	Photo []FlickrPhoto
 }
 
@@ -42,40 +40,42 @@ type FlickrPhoto struct {
 
 func (p *FlickrPhoto) URL(size string) string {
 	return fmt.Sprintf("http://farm%d.staticflickr.com/%s/%s_%s_%s.jpg",
-						uint64(p.Farm), p.Server, p.Id, p.Secret, size)
+		uint64(p.Farm), p.Server, p.Id, p.Secret, size)
 }
 
 type Photo struct {
 	URL    string
 	Width  int
-	Height int	
+	Height int
 }
 
-func (p *Photo) SetWidthAndHeight() {
-	fmt.Println(" - ", p.URL, "...")
+func NewPhoto(URL string) *Photo {
+	photo := &Photo{URL: URL}
 
-	client := &http.Client {}
-	response, _ := client.Get(p.URL)
+	client := &http.Client{}
+	response, _ := client.Get(photo.URL)
 
 	config, _ := jpeg.DecodeConfig(response.Body)
 
-	p.Width = config.Width
-	p.Height = config.Height
+	photo.Width = config.Width
+	photo.Height = config.Height
+
+	return photo
 }
 
 type Output map[string][]*Photo
 
 func main() {
 
-	client := &http.Client {}
+	client := &http.Client{}
 	buffer := make([]byte, maxLength)
 	output := make(Output)
 
-	for photosetName, photosetId := range(photosets) {
+	for name, id := range photosets {
 
-		fmt.Printf("[ %s ]\n", photosetName)
+		fmt.Printf("[ %s ]\n", name)
 
-		response, _ := client.Get(FlickrPhotosetURL(photosetId))
+		response, _ := client.Get(FlickrPhotosetURL(id))
 		n, _ := response.Body.Read(buffer)
 
 		var m FlickrMessage
@@ -88,24 +88,23 @@ func main() {
 
 		c := make(chan bool)
 
-		for _, flickrPhoto := range(m.Photoset.Photo) {
-			photo := &Photo {URL: flickrPhoto.URL("b")}
-			output[photosetName] = append(output[photosetName], photo)
-
-			go func() {
-				photo.SetWidthAndHeight()
+		for _, fPhoto := range m.Photoset.Photo {
+			go func(fPhoto FlickrPhoto) {
+				photo := NewPhoto(fPhoto.URL("b"))
+				output[name] = append(output[name], photo)
+				fmt.Println(photo.URL)
 				c <- true
-			}()
+			}(fPhoto)
 		}
 
-		for i := 0; i < len(m.Photoset.Photo); i++ {
+		for _ = range m.Photoset.Photo {
 			<-c
 		}
 
 	}
 
 	Save("javascripts/photos.js", output)
-	
+
 }
 
 func FlickrPhotosetURL(photoset string) string {
@@ -115,7 +114,7 @@ func FlickrPhotosetURL(photoset string) string {
 func Save(filename string, output Output) {
 	marshalled, _ := json.Marshal(output)
 	file, _ := os.Create(filename)
-	file.WriteString("var photos = ");
+	file.WriteString("var photos = ")
 	file.Write(marshalled)
 	file.WriteString(";\n")
 }
