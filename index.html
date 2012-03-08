@@ -33,6 +33,10 @@
 		
       });
 
+      $(window).resize(function() {
+        $('#about').css('bottom', aboutHideBottomPx() + 'px');
+      });
+
       function aboutHideBottomPx() {
         return $(window).height() - 50;
       }
