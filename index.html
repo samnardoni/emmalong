@@ -11,13 +11,35 @@
       
       $(document).ready(function(){
 
-        displayPhotos(urlTag() || 'people');
+        displayPhotos(urlTag() || 'dance');
+
+        $('#about').css('bottom', aboutHideBottomPx() + 'px');
         
         $('#photosets a').click(function() {
           displayPhotos(removeHash($(this).attr('href')));
         });
+
+        $('#about a#tab').hover(function() {
+          $('#about').addClass('active');
+          //$('#about').css('top', '0');
+          $('#about').animate({bottom: aboutShowBottomPx() + 'px'}, 'fast');
+        });
+
+        $('#about').hover(null, function() {
+          $('#about').animate({bottom: aboutHideBottomPx() + 'px'}, 'fast', function() {
+            $('#about').removeClass('active');
+          });
+        });
 		
       });
+
+      function aboutHideBottomPx() {
+        return $(window).height() - 50;
+      }
+
+      function aboutShowBottomPx() {
+        return $(window).height() - $('#about').outerHeight();
+      }
 
       
       function urlTag() {
@@ -82,6 +104,113 @@
 		height: 100%;
 		margin: 0 10px;
       }
+
+      #about {
+      	position: fixed;
+      	right: 0px;
+      	z-index: 10;
+
+        padding: 20px;
+
+        font-family: 'Yanone Kaffeesatz', arial, serif;
+        color: #EEE;
+      }
+
+        #about #box {
+        	background: #111;
+        	width: 350px;
+
+        	padding: 25px 25px 15px;
+
+        	opacity: 0.95;
+        	-moz-opacity: 0.95;
+        	filter:alpha(opacity=9.5);
+
+        	border-radius: 5px 5px 0px 5px;
+
+          clear: both;
+        }
+
+        #about.active #box, #about.active #tab {
+          box-shadow: 0px 0px 12px 0px #000 !important;
+        }
+
+          #about #box h2 {
+            font-size: 1.2em;
+            margin-top: 0.7em;
+            margin-bottom: 0.1em;
+          }
+
+        	#about #box p {
+        		margin-bottom: 0.6em;
+            line-height: 1.1em;
+        	}
+
+          #about #box ul {
+            margin-top: 0.1em;
+            margin-left: 20px;
+          }
+
+            #about #box ul li {
+              line-height: 1.1em;
+            }
+
+          #about #box #icons {
+            margin-top: 1em;
+            margin-bottom: 0em;
+          }
+
+          #about #box #icons:after {
+            content: ".";
+            display: block;
+            clear: both;
+            visibility: hidden;
+            line-height: 0;
+            height: 0;
+          }
+
+            #about #box #icons a {
+              margin-right: 5px;
+              color: #CCC;
+              text-decoration: none;
+              float: left;
+            }
+
+              #about #box #icons span a {
+                margin-top: 3px;
+                margin-left: 2px;
+              }
+
+              #about #box #icons span a:hover {
+                color: #FFF;
+              }
+
+        #about #tab {
+          z-index: 11;
+          padding: 8px 20px 8px 15px;
+
+          float: right;
+
+          background: #111;
+          color: #EEE;
+
+          border-radius: 0px 0px 5px 5px;
+
+          opacity: 0.95;
+          -moz-opacity: 0.95;
+          filter:alpha(opacity=9.5);
+
+          box-shadow: 0px 0px 5px 0px #888;
+
+          text-decoration: none;
+        }
+
+        #about #tab span {
+          float: left;
+          padding-right: 5px;
+          padding-top: 3px;
+          font-size: 0.7em;
+        }
 	  
 	  #header {
 		position: fixed;
@@ -121,19 +250,7 @@
 			color: #FFF;
 			cursor: pointer !important;
 		  }
-		  
-			a#contact:link {
-                font-family: 'Yanone Kaffeesatz', arial, serif;
-				position: fixed;
-				top: 10px;
-				right: 10px;
-				color: #999;
-				text-decoration: none;
-			}
 
-          a#contact:hover {
-                color: #333;
-          }
 		  
 	  .photos {
 		position: absolute;
@@ -167,21 +284,42 @@
 </script>
   </head>
   <body>
+  	<div id="about">
+  		<div id="box">
+		  	<p>
+		  		Hello, I'm Emma Long, residing in Plymouth, UK. Dance, fashion and potraiture are my main photographic interests. 
+		  	</p>
+        <h2>Exhibitions</h2>
+        <ul>
+          <li>13th March 2012 &mdash; &#8220;Narrative&#8221; (The Pipe Gallery, Plymouth)</li>
+        </ul>
+        <h2>For Hire</h2>
+        <p>
+          I am currently available for hire. I am located in South-West England. Please contact me by email if you are interested.
+        </p>
+		  	<p id="icons">
+          <a href="http://www.flickr.com/photos/47674410@N02/"><img src="images/flickr.png" /></a>
+          <a href="http://twitter.com/3mmalong"><img src="images/twitter.png" /></a>
+          <a href="mailto:emma@emmalong.co.uk"><img src="images/email.png" /></a>
+          <span>
+            <a href="mailto:emma@emmalong.co.uk">emma@emmalong.co.uk</a>
+          </span>
+		  	<p>
+		 </div>
+		 <a id="tab" href="#">
+		 	<span>▾</span> About
+		 </a>
+	</div>
 	<div id="header">
 	  <h1 id="title">Emma Long Photography</h1>
 	  <div id="photosets">
-	    <a href="#people">People</a>
-		<a href="#urban">Urban</a>
-		<a href="#landscape">Landscape</a>
-		<a href="#nature">Nature</a>
-		<a href="#misc">Misc</a>
+      <a href="#dance">Dance</a>
+		  <a href="#portrait">Portrait</a>
+		  <a href="#nature">Nature</a>
 	  </div>
 	</div>
-    <a id="contact" href="mailto:emma@emmalong.co.uk">emma@emmalong.co.uk</a>
-    <div class="photos" id="people-section"></div>
-    <div class="photos" id="urban-section"></div>
-    <div class="photos" id="landscape-section"></div>
+    <div class="photos" id="dance-section"></div>
+    <div class="photos" id="portrait-section"></div>
     <div class="photos" id="nature-section"></div>
-    <div class="photos" id="misc-section"></div>
   </body>
 </html>
