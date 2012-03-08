@@ -98,15 +98,18 @@ func main() {
 		for _, fPhoto := range m.Photoset.Photo {
 			photo := NewPhoto(fPhoto.URL("b"))
 			output[name] = append(output[name], photo)
-
-			go func(fPhoto FlickrPhoto) {
-				photo.SetDimensions()
-				fmt.Println(photo.URL)
-				c <- true
-			}(fPhoto)
 		}
 
-		for _ = range m.Photoset.Photo {
+		// Set dimensions of photo in parallel
+		for _, photo := range output[name] {
+			go func(p *Photo) {
+				p.SetDimensions()
+				fmt.Println(p.URL)
+				c <- true
+			}(photo)
+		}
+
+		for _ = range output[name] {
 			<-c
 		}
 
