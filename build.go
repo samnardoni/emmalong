@@ -52,6 +52,15 @@ type Photo struct {
 func NewPhoto(URL string) *Photo {
 	photo := &Photo{URL: URL}
 
+	return photo
+}
+
+// This isn't called in NewPhoto because parallelizing NewPhoto
+// means that a photoset is in a different order. This allows us
+// to add a photo to the list in order, then download photos when we want
+// to.
+func (photo *Photo) SetDimensions() {
+
 	client := &http.Client{}
 	response, _ := client.Get(photo.URL)
 
@@ -59,8 +68,6 @@ func NewPhoto(URL string) *Photo {
 
 	photo.Width = config.Width
 	photo.Height = config.Height
-
-	return photo
 }
 
 type Output map[string][]*Photo
@@ -89,9 +96,11 @@ func main() {
 		c := make(chan bool)
 
 		for _, fPhoto := range m.Photoset.Photo {
+			photo := NewPhoto(fPhoto.URL("b"))
+			output[name] = append(output[name], photo)
+
 			go func(fPhoto FlickrPhoto) {
-				photo := NewPhoto(fPhoto.URL("b"))
-				output[name] = append(output[name], photo)
+				photo.SetDimensions()
 				fmt.Println(photo.URL)
 				c <- true
 			}(fPhoto)
