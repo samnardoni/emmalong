@@ -49,6 +49,8 @@ type Photo struct {
 	Height int
 }
 
+type Output map[string][]*Photo
+
 func NewPhoto(URL string) *Photo {
 	photo := &Photo{URL: URL}
 
@@ -69,8 +71,6 @@ func (photo *Photo) SetDimensions() {
 	photo.Width = config.Width
 	photo.Height = config.Height
 }
-
-type Output map[string][]*Photo
 
 func main() {
 
