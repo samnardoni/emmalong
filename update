@@ -1,0 +1,3 @@
+go run build.go &&
+git commit -am "Update photos" &&
+git push
