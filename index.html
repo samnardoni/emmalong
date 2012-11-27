@@ -11,9 +11,17 @@
       
       $(document).ready(function(){
 
-        displayPhotos(urlTag() || 'dance');
+        displayPhotos(urlTag() || 'portrait');
 
         $('#about').css('bottom', aboutHideBottomPx() + 'px');
+
+        // About box is different (correct) height after ~200ms
+        setTimeout(function() {
+          $('#about').animate({bottom: aboutHideBottomPx() + 'px'}, 'fast');
+        }, 200);
+        
+
+        console.log('Height='+$('#about').height());
         
         $('#photosets a').click(function() {
           displayPhotos(removeHash($(this).attr('href')));
@@ -21,7 +29,6 @@
 
         $('#about a#tab').hover(function() {
           $('#about').addClass('active');
-          //$('#about').css('top', '0');
           $('#about').animate({bottom: aboutShowBottomPx() + 'px'}, 'fast');
         });
 
@@ -30,7 +37,7 @@
             $('#about').removeClass('active');
           });
         });
-		
+        
       });
 
       $(window).resize(function() {
@@ -38,11 +45,11 @@
       });
 
       function aboutHideBottomPx() {
-        return $(window).height() - 50;
+        return $('#about #tab').height() - $('#about').height() - 5;
       }
 
       function aboutShowBottomPx() {
-        return $(window).height() - $('#about').outerHeight();
+        return 0;
       }
 
       
@@ -53,19 +60,19 @@
 
       function removeHash(str)
       {
-      	return str.substring(1, str.length);
+        return str.substring(1, str.length);
       }
 
       function section(set)
       {
-      	return '#'+set+'-section';
+        return '#'+set+'-section';
       }
 
       function imageTag(i)
       {
-      	var targetHeight = 450;
-      	var ratio = 450/i.Height;
-      	return '<img width="'+i.Width*ratio+'" height="'+i.Height*ratio+'" src="'+i.URL+'"></img>'
+        var targetHeight = 500;
+        var ratio = targetHeight/i.Height;
+        return '<img width="'+i.Width*ratio+'" height="'+i.Height*ratio+'" src="'+i.URL+'"></img>'
       }
       
       function displayPhotos(set) {
@@ -75,16 +82,16 @@
 
         $('.photos').hide();
         $(window).scrollLeft(0);
-       	$(section(set)).fadeIn('fast');
+        $(section(set)).fadeIn('fast');
         
 
         $(section(set)).empty();
         $(section(set)).append('<table>');
         for(var i=0; i<photos[set].length; i++)
-	    {
-	    	$(section(set)).append('<td>'+imageTag(photos[set][i])+'</td>');
-	    }
-	    $(section(set)).append('</table>');
+        {
+            $(section(set)).append('<td>'+imageTag(photos[set][i])+'</td>');
+        }
+        $(section(set)).append('</table>');
 
       }
       
@@ -96,43 +103,35 @@
         margin: 0;
         padding: 0;
       }
-	  
-	  html {
-		height: 100%;
-	  }
+      
+      html {
+        height: 100%;
+      }
       
       body {
-        background: #EEEEEE;
-		background: #DDD -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#DDD)) repeat-x; /* for webkit browsers */
-		background: #DDD -moz-linear-gradient(top,  #FFF,  #DDD) repeat-x; /* for firefox 3.6+ */
-		height: 100%;
-		margin: 0 10px;
+        background: #FFFFFF;
+        height: 100%;
+        margin: 0 10px;
       }
 
       #about {
-      	position: fixed;
-      	right: 0px;
-      	z-index: 10;
-
+        position: fixed;
+        right: 0px;
+        z-index: 10;
         padding: 20px;
-
         font-family: 'Yanone Kaffeesatz', arial, serif;
         color: #EEE;
       }
 
         #about #box {
-        	background: #111;
-        	width: 350px;
-
-        	padding: 25px 25px 15px;
-
-        	opacity: 0.95;
-        	-moz-opacity: 0.95;
-        	filter:alpha(opacity=95);
-
-        	border-radius: 5px 5px 0px 5px;
-
-          clear: both;
+            background: #111;
+            width: 350px;
+            padding: 25px 25px 15px;
+            opacity: 0.95;
+            -moz-opacity: 0.95;
+            filter:alpha(opacity=95);
+            border-radius: 5px 5px 0px 5px;
+            clear: both;
         }
 
         #about.active #box, #about.active #tab {
@@ -145,10 +144,10 @@
             margin-bottom: 0.1em;
           }
 
-        	#about #box p {
-        		margin-bottom: 0.6em;
+            #about #box p {
+                margin-bottom: 0.6em;
             line-height: 1.1em;
-        	}
+            }
 
           #about #box ul {
             margin-top: 0.1em;
@@ -202,7 +201,7 @@
           background: #111;
           color: #EEE;
 
-          border-radius: 0px 0px 5px 5px;
+          border-radius: 5px 5px 0px 0px;
 
           opacity: 0.95;
           -moz-opacity: 0.95;
@@ -219,61 +218,69 @@
           padding-top: 3px;
           font-size: 0.7em;
         }
-	  
-	  #header {
-		position: fixed;
-		top: 30px;
-		left: 50%;
-		margin-left: -400px;
-		width: 800px;
-	  }
       
-		  h1#title {
-			font-family: 'Yanone Kaffeesatz', arial, serif;
-			text-shadow: #FFFFFF 1px 1px 1px;
-			font-size: 3em;
-			font-weight: normal;
-			text-align: center;
-			margin-bottom: 30px;
-		  }
-		  
-		  div#photosets {
-		    font-family: 'Yanone Kaffeesatz', arial, serif;
-		    text-align: center;
-		  }
-		  
-		  div#photosets a {
-			border-radius: 10px;
-			color: #555;
-			text-decoration: none;
-			padding: 8px 15px;
-			margin: 0 4px;
-		  }
-		  
-		  div#photosets a:hover,
-		  div#photosets a.selected {
-			background: #226DF0;
-			background: -webkit-gradient(linear, left top, left bottom, from(#226DF0), to(#144DB3)); /* for webkit browsers */
-		    background: -moz-linear-gradient(top,  #226DF0,  #144DB3); /* for firefox 3.6+ */
-			color: #FFF;
-			cursor: pointer !important;
-		  }
+      #header {
+        /*background: green;*/
+        position: fixed;
+        padding: 35px 0;
+        /*left: 50%;*/
+        /*margin-left: -400px;*/
+        width: 100%;
+        clear: both;
+      }
+      
+          h1#title {
+            float: left;
+            font-family: 'Yanone Kaffeesatz', arial, serif;
+            text-shadow: #FFFFFF 1px 1px 1px;
+            font-size: 3em;
+            font-weight: normal;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-left: 60px;
+          }
+          
+          div#photosets {
+            float: right;
+            font-family: 'Yanone Kaffeesatz', arial, serif;
+            margin-top: 22px;
+            margin-right: 60px;
+            text-align: center;
+          }
+          
+          div#photosets a {
+            /*border-radius: 10px;*/
+            color: #999;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin: 0 15px;
+            font-size: 1.1em;
+          }
+          
+          div#photosets a:hover,
+          div#photosets a.selected {
+            color: #000;
+            cursor: pointer !important;
+            /*text-decoration: underline;*/
+            /*border-top: 1px solid #999;*/
+            border-bottom: 1px solid black;
+          }
 
-		  
-	  .photos {
-		position: absolute;
-		top: 160px;
-	  }
+          
+      .photos {
+        position: absolute;
+        top: 120px;
+      }
 
       .photos img {
-		background: #FFF;
-		border: 1px solid #BBB; /* #CCC */
-		display: inline;
-		margin: 0 12px 10px;
-		padding: 10px;
-		-moz-box-shadow: 7px 7px 10px #C4C4C4;
-        -webkit-box-shadow: 7px 7px 10px #C4C4C4; /* #DDD */
-        box-shadow: 7px 7px 10px #C4C4C4;
+        background: #FFF;
+        border: 1px solid #DDD; /* #CCC */
+        display: inline;
+        margin: 0 12px 10px;
+        padding: 10px;
+        /*-moz-box-shadow: 7px 7px 10px #DDD;
+        -webkit-box-shadow: 7px 7px 10px #DDD;*/
+        box-shadow: 10px 10px 15px #DDD;
       }
       
 </style>
@@ -292,11 +299,14 @@
 </script>
   </head>
   <body>
-  	<div id="about">
-  		<div id="box">
-		  	<p>
-		  		Hello, I'm Emma Long, residing in Plymouth, UK. Dance, fashion and portraiture are my main photographic interests. 
-		  	</p>
+    <div id="about">
+        <a id="tab" href="#">
+            <span>▴</span> About
+         </a>
+        <div id="box">
+            <p>
+                Hello, I'm Emma Long, residing in Plymouth, UK. Dance, fashion and portraiture are my main photographic interests. 
+            </p>
         <h2>Exhibitions</h2>
         <ul>
           <li>13th March 2012 &mdash; &#8220;Narrative&#8221; (The Pipe Gallery, Plymouth)</li>
@@ -305,27 +315,24 @@
         <p>
           I am currently available for hire. I am located in South-West England. Please contact me by email if you are interested.
         </p>
-		  	<p id="icons">
-          <a href="http://www.flickr.com/photos/47674410@N02/"><img src="images/flickr.png" /></a>
-          <a href="http://twitter.com/3mmalong"><img src="images/twitter.png" /></a>
-          <a href="mailto:emma@emmalong.co.uk"><img src="images/email.png" /></a>
+            <p id="icons">
+          <a href="http://www.flickr.com/photos/47674410@N02/"><img width="24" height="24" src="images/flickr.png" /></a>
+          <a href="http://twitter.com/3mmalong"><img width="24" height="24" src="images/twitter.png" /></a>
+          <a href="mailto:emma@emmalong.co.uk"><img width="24" height="24" src="images/email.png" /></a>
           <span>
             <a href="mailto:emma@emmalong.co.uk">emma@emmalong.co.uk</a>
           </span>
-		  	<p>
-		 </div>
-		 <a id="tab" href="#">
-		 	<span>▾</span> About
-		 </a>
-	</div>
-	<div id="header">
-	  <h1 id="title">Emma Long Photography</h1>
-	  <div id="photosets">
-      <a href="#dance">Dance</a>
-		  <a href="#portrait">Portrait</a>
-		  <a href="#nature">Nature</a>
-	  </div>
-	</div>
+            <p>
+         </div>
+    </div>
+    <div id="header">
+      <h1 id="title">Emma Long Photography</h1>
+      <div id="photosets">
+          <a href="#portrait">Portrait</a>
+          <a href="#dance">Dance</a>
+          <a href="#nature">Nature</a>
+      </div>
+    </div>
     <div class="photos" id="dance-section"></div>
     <div class="photos" id="portrait-section"></div>
     <div class="photos" id="nature-section"></div>
