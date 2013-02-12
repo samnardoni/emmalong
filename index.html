@@ -14,7 +14,7 @@
         displayPhotos(urlTag() || 'portrait');
 
         $('#about').css('bottom', aboutHideBottomPx() + 'px');
-
+        
         // About box is different (correct) height after ~200ms
         setTimeout(function() {
           $('#about').animate({bottom: aboutHideBottomPx() + 'px'}, 'fast');
